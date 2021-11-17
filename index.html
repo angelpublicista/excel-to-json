@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="">
+        <input type="file" name="" id="file">
+        <button type="button" id="submitBtn">Convertir</button>
+    </form>
+
+    <div id="jsonData"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+    <script>
+
+        let selectedFile;
+        document.getElementById('file').addEventListener('change', (e) =>{
+            selectedFile = e.target.files[0]
+        })
+
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            if(selectedFile){
+                let fileReader = new FileReader();
+
+                fileReader.readAsBinaryString(selectedFile);
+                fileReader.onload = (e) => {
+                    let data = e.target.result
+                    let workbook = XLSX.read(data, {type:"binary"});
+
+                    workbook.SheetNames.forEach(sheet => {
+                        let rowObject = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheet]);
+
+                        console.log(rowObject)
+
+                        document.getElementById('jsonData').innerHTML = JSON.stringify(rowObject, undefined, 4)
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+</html>
